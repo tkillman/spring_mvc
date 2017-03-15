@@ -21,6 +21,13 @@ public class GameSearchController {
 	@Autowired
 	private SearchService searchService;
 
+	
+	//@ModelAttribute의 실행순서를 확인하자!!!!!!!!!!!!!!!!
+	
+	//RequestMapping에 맞는 메소드가 실행되기 전에 컨트롤러에 있는
+	//@ModelAttribute가 먼저 발생한다.
+	//
+	
 	@ModelAttribute("searchTypeList")
 	public List<SearchType> referenceSearchTypeList() {
 		List<SearchType> options = new ArrayList<SearchType>();
