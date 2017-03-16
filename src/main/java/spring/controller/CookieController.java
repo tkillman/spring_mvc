@@ -11,17 +11,35 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class CookieController {
 
+	
 	@RequestMapping("/cookie/make.do")
 	public String make(HttpServletResponse response){
 		response.addCookie(new Cookie("auth", "abc"));
-		return "/cookie/made";
+		//return "cookie/made";
+		
+		
+		return "redirect:/cookie/view.do";
+		
 	}
 
-	@RequestMapping("/cookie/view.do")
+	/*@RequestMapping("/cookie/view.do")
 	public String view(
 			@CookieValue(value = "auth", defaultValue = "0") String auth) {
 		System.out.println("auth 쿠키: " + auth);
 	
 		return "cookie/view";
+	}*/
+	
+	@RequestMapping("/cookie/view.do")
+	public void view(
+			@CookieValue(value = "auth", defaultValue = "0") String auth) {
+		System.out.println("auth 쿠키: " + auth);
+	
 	}
+	
+	
+	
+	
+	
+	
 }

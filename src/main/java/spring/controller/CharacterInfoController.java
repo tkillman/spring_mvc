@@ -14,6 +14,6 @@ public class CharacterInfoController {
 				@PathVariable int characterId, ModelMap model) {
 		model.addAttribute("userId", userId);
 		model.addAttribute("characterId", characterId);
-		return "game/character/info";
+		return "character/users/info";
 	}
 }

@@ -29,7 +29,12 @@
   
   <servlet-mapping>
   <servlet-name>dispatcher</servlet-name>
+  <!-- 확장자 기반 -->
   <url-pattern>*.do</url-pattern>
+  <!-- servlet 기반 -->
+  <url-pattern>/game/*</url-pattern>
+  
+  
   </servlet-mapping>
   
   <filter>

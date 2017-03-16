@@ -1,0 +1,30 @@
+
+
+parameter
+
+1. parameter 값과 매개변수 변수명을 동일하게
+2. @RequestParam("파라미터변수") 지정
+3. 커멘드 객체 타입
+
+
+
+
+
+model 생성
+1. model
+2. map
+3. modelMap
+4. modelAndView
+
+view 명시
+1.
+2.
+
+ModelAndView(); setViewName()
+
+ModelAndView(String viewName, Map<String,?> model )
+
+ModelAndView(String viewNAme, String modelName, Object modelObject)
+
+
+
