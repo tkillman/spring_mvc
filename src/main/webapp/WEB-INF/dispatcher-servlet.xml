@@ -12,12 +12,24 @@
 
 <context:component-scan base-package="spring.controller"></context:component-scan>
 
-<bean id="newArticleController" class="spring.controller.NewArticleController"
-p:articleService-ref="articleService" />
-
 <bean id="articleService" class="spring.service.ArticleService" />
+<bean id="searchService" class="spring.service.SearchService" />
+<bean id="messageSource"
+		class="org.springframework.context.support.ResourceBundleMessageSource">
+		<property name="basenames">
+			<list>
+				<value>messages.validation</value>
+			</list>
+		</property>
+	</bean>
 
-
+<bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
+		<property name="alwaysUseFullPath" value="true" />
+	</bean>
+	<bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+		<property name="alwaysUseFullPath" value="true" />		
+	</bean>
+	
 <!-- hello가 viewname이면 /WEB-INF/view/hello.jsp  -->
 <bean name="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 <property name="prefix" value="/WEB-INF/view/"></property>
