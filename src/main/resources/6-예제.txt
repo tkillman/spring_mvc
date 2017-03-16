@@ -1,0 +1,709 @@
+[LoginController.java]
+package spring.controller;
+
+import javax.validation.Valid;
+
+import spring.service.AuthenticationException;
+import spring.service.Authenticator;
+import spring.service.LoginCommand;
+import spring.validator.LoginCommandValidator;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+@Controller
+@RequestMapping("/login/login.do")
+public class LoginController {
+
+	private String formViewName = "login/form";
+	
+	@Autowired
+	private Authenticator authenticator;
+
+	@RequestMapping(method = RequestMethod.GET)
+	public String form() {
+		return formViewName;
+	}
+
+	@ModelAttribute
+	public LoginCommand formBacking() {
+		return new LoginCommand();
+	}
+
+	@RequestMapping(method = RequestMethod.POST)
+	public String submit(@Valid LoginCommand loginCommand, 
+			BindingResult result) {
+		if (result.hasErrors()) {
+			return formViewName;
+		}
+		try {
+			authenticator.authenticate(loginCommand);
+			return "redirect:/index.jsp";
+		} catch (AuthenticationException e) {
+			result.reject("invalidIdOrPassword", new Object[] { loginCommand
+					.getUserId() }, null);
+			return formViewName;
+		}
+	}
+
+	@InitBinder
+	protected void initBinder(WebDataBinder binder) {
+		binder.setValidator(new LoginCommandValidator());
+	}
+
+	public void setAuthenticator(Authenticator loginService) {
+		this.authenticator = loginService;
+	}
+
+}
+	
+[LoginCommand.java]
+package spring.service;
+
+public class LoginCommand {
+	private String userId;
+	private String password;
+	
+	public String getUserId() {
+		return userId;
+	}
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
+	}
+}
+
+	
+[AuthenticationException.java]
+package spring.service;
+
+public class AuthenticationException extends Exception{
+
+}
+
+[Authenticator.java]
+package spring.service;
+
+public interface Authenticator {
+
+	void authenticate(LoginCommand loginCommand)
+			throws AuthenticationException;
+
+}
+
+[MockAuthenticator.java]
+package spring.service;
+
+import spring.common.CommonLogger;
+
+public class MockAuthenticator implements Authenticator {
+	
+	private CommonLogger commonLogger;
+
+
+	public void authenticate(LoginCommand loginCommand)
+			throws AuthenticationException {
+		if (!loginCommand.getUserId().equals(loginCommand.getPassword())) {
+			commonLogger.log("인증 에러 - " + loginCommand.getUserId());
+			throw new AuthenticationException();
+		}
+	}
+
+	public void setCommonLogger(CommonLogger commonLogger) {
+		this.commonLogger = commonLogger;
+	}
+
+}
+
+
+[LoginCommandValidator.java]
+package spring.validator;
+
+import spring.service.LoginCommand;
+
+import org.springframework.validation.Errors;
+import org.springframework.validation.ValidationUtils;
+import org.springframework.validation.Validator;
+
+public class LoginCommandValidator implements Validator {
+	
+	public boolean supports(Class<?> clazz) {
+		return LoginCommand.class.isAssignableFrom(clazz);
+	}
+
+	public void validate(Object target, Errors errors) {
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "userId", "required");
+		//required.loginCommand.userId
+		//에러코드.객체타입.필드명
+		//에러코드.필드명
+		//에러코드
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password",
+				"required");
+		//required.password
+	}
+
+}
+
+
+
+[CommonLogger.java]
+package spring.common;
+
+public interface CommonLogger {
+
+	public void log(String string);
+
+}
+
+
+[CommonLoggerImpl.java]
+package spring.common;
+
+public class CommonLoggerImpl implements CommonLogger {
+
+	public void log(String message) {
+		System.out.println("CommonLogger - " + message);
+	}
+
+}
+
+[dispatcher-servlet.xml]
+...
+<bean id="commonLogger" class="spring.common.CommonLoggerImpl" />
+<bean id="authenticator" class="spring.service.MockAuthenticator"
+		p:commonLogger-ref="commonLogger" />
+
+<bean class="spring.controller.LoginController">
+	<property name="authenticator" ref="authenticator" />
+</bean>
+
+	
+[/WEB-INF/view/login/form.jsp]
+<%@ page contentType="text/html; charset=UTF-8"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<html>
+<head>
+<title>로그인</title>
+</head>
+<body>
+	<form:form commandName="loginCommand">
+		<form:errors element="div" />
+		아이디: <form:input path="userId" />
+		<form:errors path="userId" />
+		<br />
+		암호: <form:password path="password" showPassword="false" />
+		<form:errors path="password" />
+		<br />
+		<input type="submit" />
+	</form:form>
+</body>
+</html>
+
+	
+
+=========================================================================================================
+
+[ReportSubmissionController.java]
+	package spring.controller;
+
+	import org.springframework.stereotype.Controller;
+	import org.springframework.web.bind.annotation.RequestMapping;
+	import org.springframework.web.bind.annotation.RequestMethod;
+	import org.springframework.web.bind.annotation.RequestParam;
+	import org.springframework.web.multipart.MultipartFile;
+	import org.springframework.web.multipart.MultipartHttpServletRequest;
+
+	@Controller
+	public class ReportSubmissionController {
+
+	@RequestMapping(value = "/report/submission.do", method = RequestMethod.GET)
+	public String form() {
+			return "report/submissionForm";
+		}
+
+	@RequestMapping(value = "/report/submitReport1.do", method = RequestMethod.POST)
+	public String submitReport1(@RequestParam("studentNumber") String studentNumber,
+				@RequestParam("report") MultipartFile report) {
+			printInfo(studentNumber, report);
+			return "report/submissionComplete";
+		}
+
+	private void printInfo(String studentNumber, MultipartFile report) {
+			System.out.println(studentNumber + "가 업로드 한 파일: "
+					+ report.getOriginalFilename());
+		}
+
+	@RequestMapping(value = "/report/submitReport2.do", method = RequestMethod.POST)
+	public String submitReport2(MultipartHttpServletRequest request) {
+			String studentNumber = request.getParameter("studentNumber");
+			MultipartFile report = request.getFile("report");
+			printInfo(studentNumber, report);
+			return "report/submissionComplete";
+		}
+
+	@RequestMapping(value = "/report/submitReport3.do", method = RequestMethod.POST)
+	public String submitReport3(ReportCommand reportCommand) {
+			printInfo(reportCommand.getStudentNumber(), reportCommand.getReport());
+			return "report/submissionComplete";
+		}
+		
+	}
+
+[ReportCommand.java]
+package spring.controller;
+
+import org.springframework.web.multipart.MultipartFile;
+
+public class ReportCommand {
+
+	private String studentNumber;
+	private MultipartFile report;
+
+	public String getStudentNumber() {
+			return studentNumber;
+	}
+
+	public void setStudentNumber(String studentNumber) {
+			this.studentNumber = studentNumber;
+	}
+
+	public MultipartFile getReport() {
+			return report;
+	}
+
+	public void setReport(MultipartFile report) {
+			this.report = report;
+	}
+
+	}
+[dispatcher-servlet.xml]
+	...
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+	</bean>
+	...
+	<bean class="spring.controller.ReportSubmissionController" />
+	...
+
+[/WEB-INF/view/report/submissionForm.jsp]
+	<%@ page contentType="text/html; charset=UTF-8"%>
+	<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+	<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+	<html>
+	<head>
+	<title>리포트 제출</title>
+	</head>
+	<body>
+	<h3>@RequestParam 사용</h3>
+	<form action="submitReport1.do" method="post" enctype="multipart/form-data">
+		학번: <input type="text" name="studentNumber" />
+		<br/>
+		리포트파일: <input type="file" name="report" />
+		<br/>
+		<input type="submit" />
+	</form>
+
+	<h3>MultipartHttpServletRequest 사용</h3>
+	<form action="submitReport2.do" method="post" enctype="multipart/form-data">
+		학번: <input type="text" name="studentNumber" />
+		<br/>
+		리포트파일: <input type="file" name="report" />
+		<br/>
+		<input type="submit" />
+	</form>
+
+	<h3>커맨드 객체 사용</h3>
+	<form action="submitReport3.do" method="post" enctype="multipart/form-data">
+		학번: <input type="text" name="studentNumber" />
+		<br/>
+		리포트파일: <input type="file" name="report" />
+		<br/>
+		<input type="submit" />
+	</form>
+
+
+	</body>
+	</html>
+
+[/WEB-INF/view/report/submissionComplete.jsp]
+	<%@ page contentType="text/html; charset=UTF-8"%>
+	<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+	<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+	<html>
+	<head>
+	<title>리포트 제출 완료</title>
+	</head>
+	<body>
+	리포트 제출 완료
+	</body>
+	</html>
+
+================================================================================================
+
+[QueryLogController.java]
+	package spring.controller;
+
+	//import java.text.DateFormat;
+	//import java.text.SimpleDateFormat;
+	//import java.util.Date;
+
+	//import org.springframework.beans.propertyeditors.CustomDateEditor;
+	import org.springframework.stereotype.Controller;
+	import org.springframework.validation.BindingResult;
+	//import org.springframework.web.bind.WebDataBinder;
+	//import org.springframework.web.bind.annotation.InitBinder;
+	import org.springframework.web.bind.annotation.ModelAttribute;
+	import org.springframework.web.bind.annotation.RequestMapping;
+
+	@Controller
+	public class QueryLogController {
+
+		@ModelAttribute("command")
+		public QueryLogCommand formBacking() {
+			return new QueryLogCommand();
+		}
+
+		@RequestMapping("/log/query.do")
+		public String query(@ModelAttribute("command") QueryLogCommand command,
+				BindingResult result) {
+			return "log/logList";
+		}
+
+	//	@InitBinder
+	//	protected void initBinder(WebDataBinder binder) {
+	//		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+	//		binder.registerCustomEditor(Date.class, new CustomDateEditor(
+	//				dateFormat, true));
+	//	}
+	}
+[QueryLogCommand.java]
+	package spring.controller;
+
+	import java.util.Date;
+
+	public class QueryLogCommand {
+
+		private Date from;
+		private Date to;
+
+		public Date getFrom() {
+			return from;
+		}
+
+		public void setFrom(Date from) {
+			this.from = from;
+		}
+
+		public Date getTo() {
+			return to;
+		}
+
+		public void setTo(Date to) {
+			this.to = to;
+		}
+
+	}
+
+[dispatcher-servlet.xml]
+	...
+	<bean class="spring.controller.QueryLogController" />
+	...
+
+	[/WEB-INF/view/log/logList.jsp]
+	<%@ page language="java" contentType="text/html; charset=UTF-8"%>
+	<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+	<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+	<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+	<html>
+	<head>
+	<title>로그 목록</title>
+	</head>
+	<body>
+	<form:form method="get">
+	<form:errors path="from" element="div"/>
+	<form:errors path="to" element="div"/>
+	시작일: <form:input path="from" />
+	종료일: <form:input path="to" />
+	<input type="submit" value="조회" />
+	</form:form>
+	</body>
+	</html>
+
+
+=====================================================================================================
+[EventController.java] 
+package spring.controller;
+
+	import org.springframework.stereotype.Controller;
+	import org.springframework.web.bind.annotation.RequestMapping;
+
+	@Controller
+	public class EventController {
+
+		@RequestMapping("/event/list.do")
+		public String list() {
+			return "event/list";
+		}
+		
+		@RequestMapping("/event/eventExpired.do")
+		public String expired() {
+			return "event/eventExpired";
+		}
+	}
+[EventExpirationCheckInterceptor.java]
+      	package spring.interceptor;
+			
+	import java.io.IOException;
+	import java.util.Calendar;
+	import java.util.Date;
+			
+	import javax.servlet.http.HttpServletRequest;
+	import javax.servlet.http.HttpServletResponse;
+			
+	import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+			
+	public class EventExpirationCheckInterceptor extends HandlerInterceptorAdapter {
+			
+		@Override
+		public boolean preHandle(HttpServletRequest request,
+				HttpServletResponse response, Object handler) throws Exception {
+			if (checkEvent(request) && checkEventExpiration()) {
+				displayEventExpirationPage(request, response);
+				return false;
+			}
+			return true;
+		}
+			
+		private boolean checkEvent(HttpServletRequest request) {
+			return request.getRequestURI().equals(
+					request.getContextPath() + "/event/list.do");
+		}
+			
+		private boolean checkEventExpiration() {
+			Calendar calendar = Calendar.getInstance();
+			calendar.set(2016, 09, 09);
+			Date now = new Date();
+			return now.after(calendar.getTime());
+		}
+			
+		private void displayEventExpirationPage(HttpServletRequest request,
+				HttpServletResponse response) throws IOException {
+			response.sendRedirect("eventExpired.do");
+		}
+			
+	}
+
+[dispatcher-servlet.xml]
+	...
+	<bean class="spring.controller.EventController" />
+	...
+	<bean
+		class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
+		<property name="alwaysUseFullPath" value="true" />
+		<property name="interceptors">
+			<list>
+				<ref bean="eventExpirationCheckInterceptor" />
+			</list>
+		</property>
+	</bean>
+
+	<bean id="eventExpirationCheckInterceptor" class="spring.interceptor.EventExpirationCheckInterceptor" />
+	...
+
+[/WEB-INF/view/event/list.jsp]
+	<%@ page contentType="text/html; charset=UTF-8"%>
+	<html>
+	<head>
+	<title>이벤트 목록</title>
+	</head>
+	<body>
+	이벤트 목록 출력
+	</body>
+	</html>
+
+[/WEB-INF/view/event/eventExpired.jsp]
+	<%@ page contentType="text/html; charset=UTF-8"%>
+	<html>
+	<head>
+	
+	<title>이벤트 종료</title>
+	</head>
+	<body>
+	이벤트 종료됨
+	</body>
+	</html>
+	
+=====================================================================================================
+[ArithmeticOperatorController.java]
+	package spring.controller;
+
+	import org.springframework.stereotype.Controller;
+	import org.springframework.ui.Model;
+	import org.springframework.web.bind.annotation.RequestMapping;
+	import org.springframework.web.bind.annotation.RequestParam;
+
+	@Controller
+	public class ArithmeticOperatorController {
+
+		@RequestMapping("/math/add.do")
+		public String add(@RequestParam("op1") int op1, @RequestParam("op2") int op2, Model model) {
+			model.addAttribute("result", op1 + op2);
+			return "math/result";
+		}
+		
+		@RequestMapping("/math/subtract.do")
+		public String subtract(@RequestParam("op1") int op1, @RequestParam("op2") int op2, Model model) {
+			model.addAttribute("result", op1 - op2);
+			return "math/result";
+		}
+		
+		@RequestMapping("/math/multiply.do")
+		public String multiply(@RequestParam("op1") int op1, @RequestParam("op2") int op2, Model model) {
+			model.addAttribute("result", op1 * op2);
+			return "math/result";
+		}
+		
+		@RequestMapping("/math/divide.do")
+		public String divide(@RequestParam("op1") int op1, @RequestParam("op2") int op2, Model model) {
+			model.addAttribute("result", op1 / op2);
+			return "math/result";
+		}
+	}
+
+	[dispatcher-servlet.xml]
+	...
+	<bean class="spring.controller.ArithmeticOperatorController" />
+	...
+	<bean
+		class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+		<property name="exceptionMappings">
+			<props>
+				<prop key="java.lang.ArithmeticException">
+					error/mathException
+				</prop>
+				<prop key="java.lang.Exception">
+					error/exception
+				</prop>
+			</props>
+		</property>
+	</bean>
+	...
+      
+[/WEB-INF/view/error/exception.jsp]
+	<%@ page language="java" contentType="text/html; charset=UTF-8"%>
+	<html>
+	<head>
+	<title>예외 발생</title>
+	</head>
+	<body>
+	요청을 처리하는 도중에 예외가 발생하였습니다:
+	${exception.message}
+	<%
+		Throwable e = (Throwable) request.getAttribute("exception");
+		e.printStackTrace();
+	%>
+	</body>
+	</html>
+
+[/WEB-INF/view/error/mathException.jsp]
+	<%@ page language="java" contentType="text/html; charset=UTF-8"%>
+	<html>
+	<head>
+	<title>예외 발생</title>
+	</head>
+	<body>
+	연산 과정에서 예외가 발생하였습니다.
+	</body>
+	</html>
+
+[/WEB-INF/view/error/nullException.jsp]
+	<%@ page language="java" contentType="text/html; charset=UTF-8"%>
+	<html>
+	<head>
+	<title>예외 발생</title>
+	</head>
+	<body>
+	요청을 처리하는 과정에서 예외(null)가 발생하였습니다.
+	</body>
+	</html>
+=====================================================================================================
+[SimpleConverterController.java]
+	package spring.controller;
+
+	import org.springframework.stereotype.Controller;
+	import org.springframework.util.MultiValueMap;
+	import org.springframework.web.bind.annotation.RequestBody;
+	import org.springframework.web.bind.annotation.RequestMapping;
+	import org.springframework.web.bind.annotation.RequestMethod;
+	import org.springframework.web.bind.annotation.ResponseBody;
+
+	@Controller
+	public class SimpleConverterController {
+
+		@RequestMapping(value = "/test/simpleTest.do", method = RequestMethod.GET)
+		public String simpleTestForm() {
+			return "test/simpleTestForm";
+		}
+
+		@RequestMapping(value = "/test/simpleTest.do", method = RequestMethod.POST)
+		@ResponseBody
+		public String simpleTest(@RequestBody String body) {
+			return body;
+		}
+
+		@RequestMapping(value = "/test/simpleTest1.do", method = RequestMethod.GET)
+		public String simpleTestForm1() {
+			return "test/simpleTestForm";
+		}
+
+		@RequestMapping(value = "/test/simpleTest1.do", method = RequestMethod.POST)
+		@ResponseBody
+		public byte[] simpleTest1(@RequestBody byte[] body) {
+			return body;
+		}
+
+		@RequestMapping(value = "/test/simpleTest2.do", method = RequestMethod.GET)
+		public String simpleTestForm2() {
+			return "test/simpleTestForm";
+		}
+
+		@RequestMapping(value = "/test/simpleTest2.do", method = RequestMethod.POST)
+		@ResponseBody
+		public String simpleTest2(@RequestBody MultiValueMap<String, String> body) {
+			return body.toString();
+		}
+	}
+
+[dispatcher-servlet.xml]
+	...
+	<bean class="spring.controller.SimpleConverterController" />
+	...
+
+[/WEB-INF/view/test/simpleTestForm.jsp]
+	<%@ page contentType="text/html; charset=UTF-8"%>
+	<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+	<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+	<html>
+	<head>
+	<title>단순 테스트</title>
+	</head>
+	<body>
+	<form method="POST">
+		이름: <input type="text" name="name" /> <br/>
+		나이: <input type="text" name="age" />
+		<input type="submit" />
+	</form>
+	</body>
+	</html>

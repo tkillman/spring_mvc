@@ -1,0 +1,89 @@
+[/WEB-INF/web.xml]
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd" id="WebApp_ID" version="3.1">
+
+
+
+			<servlet>
+				<servlet-name>dispatcher</servlet-name>
+				<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>		
+			</servlet>
+
+			<servlet-mapping>
+				<servlet-name>dispatcher</servlet-name>
+				<url-pattern>*.do</url-pattern>
+			</servlet-mapping>
+		</web-app>
+
+
+
+[HelloController.java]
+        	package spring.controller;
+
+			import java.util.Calendar;
+
+			import org.springframework.stereotype.Controller;
+			import org.springframework.web.bind.annotation.RequestMapping;
+			import org.springframework.web.servlet.ModelAndView;
+
+			@Controller
+			public class HelloController {
+
+				@RequestMapping("/hello.do")
+				public ModelAndView hello() {
+					ModelAndView mav = new ModelAndView();
+					mav.setViewName("hello");
+					mav.addObject("greeting", getGreeting());
+					return mav;
+				}
+
+				private String getGreeting() {
+					int hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+					if (hour >= 6 && hour <= 10) {
+						return "좋은 아침입니다.";
+					} else if (hour >= 12 && hour <= 15) {
+						return "점심 식사는 하셨나요?";
+					} else if (hour >= 18 && hour <= 22) {
+						return "좋은 밤 되세요";
+					}
+					return "안녕하세요";
+				}
+
+			}
+
+
+
+[/WEB-INF/dispatcher-servlet.xml]
+		<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context-4.2.xsd">
+
+
+			<bean id="helloController" class="spring.controller.HelloController" />
+
+			<bean id="viewResolver"	class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+				<property name="prefix" value="/WEB-INF/view/" />
+				<property name="suffix" value=".jsp" />
+			</bean>
+
+		</beans>
+
+
+
+[/WEB-INF/view/hello.jsp]
+        	<%@ page language="java" contentType="text/html; charset=UTF-8"%>
+		<html>
+		<head>
+			<title>인사</title>
+		</head>
+		 <body>
+			인사말: <strong>${greeting}</strong>
+		</body>
+		</html>
+
+
