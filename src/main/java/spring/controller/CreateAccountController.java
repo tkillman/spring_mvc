@@ -39,7 +39,9 @@ public class CreateAccountController {
 	}
 
 	private String autoDetectZipcode(String remoteAddr) {
+		
 		return "000-000";
+		
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
@@ -56,6 +58,7 @@ public class CreateAccountController {
 		if (result.hasErrors()) { //reject() , rejectValue() 메소드가 한번이라도 실행되면 true 리턴
 			
 			return "account/creationForm";
+			
 		}
 		
 		return "account/created";

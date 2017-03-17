@@ -45,6 +45,7 @@ p:alwaysUseFullPath="true"></bean>
 	</bean>
 	
 <bean id="commonLogger" class="spring.common.CommonLoggerImpl" />
+
 <bean id="authenticator" class="spring.service.MockAuthenticator"
 		p:commonLogger-ref="commonLogger" />
 			
@@ -55,5 +56,11 @@ p:alwaysUseFullPath="true"></bean>
 <property name="prefix" value="/WEB-INF/view/"></property>
 <property name="suffix" value=".jsp"></property>
 </bean>
+
+
+<bean name="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"></bean>
+
+
+
 
 </beans>

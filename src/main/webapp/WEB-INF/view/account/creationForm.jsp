@@ -7,8 +7,12 @@
 </head>
 <body> 
 
-	<!-- command 는 MemberInfo 객체-->
+	
+	<!-- 에러 메세지를 command로 쓰겠다. -->
 	<spring:hasBindErrors name="command" />
+	
+	
+	<!-- 글로벌 에러인 경우 command, 아닌 경우 command.필드명을 쓰겠다. -->
 	<form:errors path="command" />
 	<form method="post">
 		아이디: <input type="text" name="id" value="${command.id}" />
@@ -34,6 +38,7 @@
 		<form:errors path="command.address.address2" />
 		
 		<br /> <input type="submit" />
+		
 	</form>
 </body>
 </html>

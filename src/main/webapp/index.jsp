@@ -22,7 +22,19 @@ CreateAccountController
 
 CharacterInfoController
 
-<a href="game/users/tk/characters/12">restful 사용예제</a>
+<a href="game/users/characters/12">restful 사용예제</a><br>
+
+
+
+<a href="game/users/character">test</a><br>
+
+<a href="login/login.do">유효성 검사 어노테이션 사용</a><br>
+
+<a href="log/query.do">달력형식</a><br>
+
+
+<a href="report/submission.do">파일 업로드</a>
+
 
 </body>
 </html>

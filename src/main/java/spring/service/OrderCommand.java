@@ -1,4 +1,4 @@
-package spring.controller;
+package spring.service;
 
 	import java.util.List;
 
