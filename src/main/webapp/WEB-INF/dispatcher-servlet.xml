@@ -3,29 +3,23 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:p="http://www.springframework.org/schema/p"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
-
 <!-- 
 <bean id="helloController" class="spring.controller.HelloController"></bean>
  -->
 
-<!-- servlet 기반 url-pattern 지정시에 servlet 지정 부분을 잘라내지 않기 위해 하는 설정 -->
-<!-- servlet 기반 url-pattern 지정이란  ex) /폴더명/* -->
-<!-- 확장자 기반은 ex)*.do -->
-
-<bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping"
- p:alwaysUseFullPath="true"></bean>
-<bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter"
-p:alwaysUseFullPath="true"></bean>
-
-
 
 <context:component-scan base-package="spring.controller"></context:component-scan>
+
 
 <bean id="articleService" class="spring.service.ArticleService" />
 <bean id="searchService" class="spring.service.SearchService" />
 
+
+<!-- 유효성 검사 -->
 <bean id="messageSource"
 		class="org.springframework.context.support.ResourceBundleMessageSource">
 		<property name="basenames">
@@ -36,17 +30,91 @@ p:alwaysUseFullPath="true"></bean>
 		</property>
 	</bean>
 
+<!-- servlet 기반 url-pattern 지정시에 servlet 지정 부분을 잘라내지 않기 위해 하는 설정 -->
+<!-- servlet 기반 url-pattern 지정이란  ex) /폴더명/* -->
+<!-- 확장자 기반은 ex)*.do -->
 
+<!-- 인터셉트 설정 -->
+<bean id="eventExpirationCheckInterceptor" class="spring.interceptor.EventExpirationCheckInterceptor" />
+
+
+<!-- 경로 기반 설정 -->
 <bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
 		<property name="alwaysUseFullPath" value="true" />
+		
+		<!-- interceptor 등록 -->
+		<property name="interceptors">
+		<list>
+			<ref bean="eventExpirationCheckInterceptor"/>
+		</list>
+		</property>
+		
 	</bean>
+	
 	<bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
 		<property name="alwaysUseFullPath" value="true" />		
 	</bean>
 	
+	
+<!--  -->	
 <bean id="commonLogger" class="spring.common.CommonLoggerImpl" />
-<bean id="authenticator" class="spring.service.MockAuthenticator"
-		p:commonLogger-ref="commonLogger" />
+
+<bean id="authenticator" class="spring.service.MockAuthenticator" p:commonLogger-ref="commonLogger" />
+	
+	
+<!-- DB에 저장시키기 -->
+<bean name="fileDao" class="spring.service.fileDao">
+<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+</bean>			
+
+<!-- 도시검색기능 -->
+
+<bean name="cityController" class="Ajax.Controller.CityController"></bean> 
+
+<bean name="cityDao" class="Ajax.Controller.CityDAO">
+<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+</bean>
+<bean name="cityService" class="Ajax.Controller.CityServiceImpl"></bean>
+
+
+		
+		
+<!-- 예외 처리 -->			
+<bean
+		class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+		<property name="exceptionMappings">
+			<props>
+				<prop key="java.lang.ArithmeticException">
+					error/mathException
+				</prop>
+				<prop key="java.lang.NullPointerException">
+					error/nullException
+				</prop>
+				
+				<prop key="java.lang.Exception">
+					error/exception
+				</prop>
+			</props>
+		</property>
+	</bean>			
+			
+			
+			
+
+
+<mvc:annotation-driven>
+		<mvc:message-converters>
+			<!-- @ResponseBody로 String 처리할때 한글처리 -->
+			<bean class="org.springframework.http.converter.StringHttpMessageConverter">
+				<property name="supportedMediaTypes">
+					<list>
+						<value>text/html;charset=UTF-8</value>
+					</list>
+				</property>
+			</bean>
+		</mvc:message-converters>
+</mvc:annotation-driven>			
+			
 			
 			
 			
@@ -55,5 +123,7 @@ p:alwaysUseFullPath="true"></bean>
 <property name="prefix" value="/WEB-INF/view/"></property>
 <property name="suffix" value=".jsp"></property>
 </bean>
+
+<bean name="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"></bean>
 
 </beans>

@@ -1,12 +1,15 @@
 [LoginController.java]
 package spring.controller;
 
+
 import javax.validation.Valid;
+
 
 import spring.service.AuthenticationException;
 import spring.service.Authenticator;
 import spring.service.LoginCommand;
 import spring.validator.LoginCommandValidator;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
 
 @Controller
 @RequestMapping("/login/login.do")
@@ -373,7 +377,7 @@ public class ReportCommand {
 		@ModelAttribute("command")
 		public QueryLogCommand formBacking() {
 			return new QueryLogCommand();
-		}
+		}.
 
 		@RequestMapping("/log/query.do")
 		public String query(@ModelAttribute("command") QueryLogCommand command,
@@ -385,9 +389,10 @@ public class ReportCommand {
 	//	protected void initBinder(WebDataBinder binder) {
 	//		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	//		binder.registerCustomEditor(Date.class, new CustomDateEditor(
-	//				dateFormat, true));
+	//				dateFormat, true)); //마지막 true는 null값도 허용한다라는 의미.
 	//	}
 	}
+	
 [QueryLogCommand.java]
 	package spring.controller;
 
@@ -475,6 +480,7 @@ package spring.controller;
 	import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 			
 	public class EventExpirationCheckInterceptor extends HandlerInterceptorAdapter {
+	//Adapter란 litener 를 구현한 클래스로 빈 메소드를 가지고 있다.
 			
 		@Override
 		public boolean preHandle(HttpServletRequest request,

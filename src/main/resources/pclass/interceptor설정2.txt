@@ -1,0 +1,6 @@
+<mvc:interceptors>
+    <mvc:interceptor>
+        <mvc:mapping path="/**" /> <!-- 모든 URL 에 대해 Interceptor 를 적용하고자 한다면 /** -->
+        <bean class="spring.interceptor.EventExpirationCheckInterceptor"/> <!-- HandlerInterceptor 인터페이스를 구현한 클래스 -->
+    </mvc:interceptor>
+	</mvc:interceptors>
