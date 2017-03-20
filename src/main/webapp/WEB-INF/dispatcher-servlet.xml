@@ -10,18 +10,32 @@
 <bean id="helloController" class="spring.controller.HelloController"></bean>
  -->
 
+<!-- servlet 기반 url-pattern 지정시에 servlet 지정 부분을 잘라내지 않기 위해 하는 설정 -->
+<!-- servlet 기반 url-pattern 지정이란  ex) /폴더명/* -->
+<!-- 확장자 기반은 ex)*.do -->
+
+<bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping"
+ p:alwaysUseFullPath="true"></bean>
+<bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter"
+p:alwaysUseFullPath="true"></bean>
+
+
+
 <context:component-scan base-package="spring.controller"></context:component-scan>
 
 <bean id="articleService" class="spring.service.ArticleService" />
 <bean id="searchService" class="spring.service.SearchService" />
+
 <bean id="messageSource"
 		class="org.springframework.context.support.ResourceBundleMessageSource">
 		<property name="basenames">
 			<list>
 				<value>messages.validation</value>
+				<!-- 추가할 메세지가 있으면 여기 추가해준다. -->
 			</list>
 		</property>
 	</bean>
+
 
 <bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
 		<property name="alwaysUseFullPath" value="true" />
@@ -30,6 +44,12 @@
 		<property name="alwaysUseFullPath" value="true" />		
 	</bean>
 	
+<bean id="commonLogger" class="spring.common.CommonLoggerImpl" />
+<bean id="authenticator" class="spring.service.MockAuthenticator"
+		p:commonLogger-ref="commonLogger" />
+			
+			
+			
 <!-- hello가 viewname이면 /WEB-INF/view/hello.jsp  -->
 <bean name="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 <property name="prefix" value="/WEB-INF/view/"></property>
