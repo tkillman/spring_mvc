@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Random;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 	import org.springframework.web.bind.annotation.RequestMapping;
 	import org.springframework.web.bind.annotation.RequestMethod;
@@ -13,9 +14,22 @@ import org.springframework.stereotype.Controller;
 	import org.springframework.web.multipart.MultipartFile;
 	import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import spring.model.fileInfo;
+import spring.model.fileInfo2;
+import spring.service.fileDao;
+
 	@Controller
 	public class ReportSubmissionController {
+	
+  	@Autowired
+  	fileDao dao;
+		
+		
+	public void setDao(fileDao dao) {
+		this.dao = dao;
+	}
 
+	
 	@RequestMapping(value = "/report/submission.do", method = RequestMethod.GET)
 	public String form() {
 			return "report/submissionForm";
@@ -24,6 +38,8 @@ import org.springframework.stereotype.Controller;
 	@RequestMapping(value = "/report/submitReport1.do", method = RequestMethod.POST)
 	public String submitReport1(@RequestParam("studentNumber") String studentNumber,
 				@RequestParam("report") MultipartFile report) {
+			
+		
 			printInfo(studentNumber, report);
 			
 			
@@ -51,14 +67,40 @@ import org.springframework.stereotype.Controller;
 				// TODO Auto-generated catch block
 				e.printStackTrace();}
 		
-				
-				
-				
-				
-				
+		   //2. 디비에 경로 넣기	
+			/*fileInfo fileinfo = new fileInfo();
 			
-			
+			fileinfo.setOriginalFilename(o_name);
 		
+			fileinfo.setFileSize(report.getSize());
+			
+			fileinfo.setFilePath(file.getAbsolutePath());
+			
+			dao.insertFileInfo(fileinfo);*/
+				
+			//3. 디비에 바이트 배열 넣기
+			fileInfo2 fileinfo2 = new fileInfo2();
+			fileinfo2.setFileSize(report.getSize());
+			fileinfo2.setOriginalFilename(o_name);
+			try {
+				fileinfo2.setFileSource(report.getBytes());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			dao.insertFileInfo2(fileinfo2);
+			
+			
+			String str;
+			try {
+				str = new String(report.getBytes());
+				//System.out.println(str);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 			return "report/submissionComplete";
 		}
 

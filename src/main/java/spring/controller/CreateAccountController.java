@@ -49,6 +49,7 @@ public class CreateAccountController {
 		return "account/creationForm";
 	}
 
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public String submit(@ModelAttribute("command") MemberInfo memberInfo,
 			BindingResult result) { //유효성 검사를 위해서 BindingResult를 받아온다.
@@ -64,7 +65,5 @@ public class CreateAccountController {
 		return "account/created";
 		
 	}
-	
-	
 	
 }

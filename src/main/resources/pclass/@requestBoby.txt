@@ -8,4 +8,6 @@ String 타입의 val이라는 변수에 body의 값이 그대로 세팅 된다.
 =============================================================
 @ResponseBody : 자바 객체를 HTTP 요청의 body로 매핑한다.
 
-클라이언트에 JSON 형식의 값을 응답할 때 유용하다. 메서드에 @ResponseBody를 적용한 후 문자열을 리턴하면 그 값은 HTTP response header가 아니라 HTTP response body에 쓰여진다. 객체를 넘길경우 스프링에 내장된 JACKSON에 의해 문자열로 변환될 것이다.
+클라이언트에 JSON 형식의 값을 응답할 때 유용하다. 메서드에 @ResponseBody를 적용한 후 문자열을 리턴하면 
+
+그 값은 HTTP response header가 아니라 HTTP response body에 쓰여진다. 객체를 넘길경우 스프링에 내장된 JACKSON에 의해 문자열로 변환될 것이다.

@@ -3,3 +3,17 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
+
+<mapper namespace="mapperName">
+<insert id="insert" parameterType="spring.model.fileInfo">
+
+insert into filesave values(#{originalFilename},#{filePath},#{fileSize})
+
+</insert>
+
+<insert id="insertDB" parameterType="spring.model.fileInfo2">
+insert into filesave2 values(#{originalFilename},#{fileSource},#{fileSize})
+</insert>
+
+
+</mapper>
