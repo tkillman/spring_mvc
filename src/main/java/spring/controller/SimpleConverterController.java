@@ -10,15 +10,20 @@ package spring.controller;
 	@Controller
 	public class SimpleConverterController {
 
+		
 		@RequestMapping(value = "/test/simpleTest.do", method = RequestMethod.GET)
 		public String simpleTestForm() {
 			return "test/simpleTestForm";
 		}
 
 		@RequestMapping(value = "/test/simpleTest.do", method = RequestMethod.POST)
+		
 		@ResponseBody
 		public String simpleTest(@RequestBody String body) {
+			//body 내용을 String 타입 혹은 byte[] 로 받을 수 있다.
+			
 			return body;
+			
 		}
 
 		@RequestMapping(value = "/test/simpleTest1.do", method = RequestMethod.GET)
@@ -37,6 +42,7 @@ package spring.controller;
 			return "test/simpleTestForm";
 		}
 
+		
 		@RequestMapping(value = "/test/simpleTest2.do", method = RequestMethod.POST)
 		@ResponseBody
 		public String simpleTest2(@RequestBody MultiValueMap<String, String> body) {

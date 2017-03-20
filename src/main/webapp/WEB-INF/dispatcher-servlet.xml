@@ -3,7 +3,9 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:p="http://www.springframework.org/schema/p"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
 <!-- 
 <bean id="helloController" class="spring.controller.HelloController"></bean>
@@ -15,6 +17,7 @@
 
 <bean id="articleService" class="spring.service.ArticleService" />
 <bean id="searchService" class="spring.service.SearchService" />
+
 
 <!-- 유효성 검사 -->
 <bean id="messageSource"
@@ -63,6 +66,17 @@
 <bean name="fileDao" class="spring.service.fileDao">
 <property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
 </bean>			
+
+<!-- 도시검색기능 -->
+
+<bean name="cityController" class="Ajax.Controller.CityController"></bean> 
+
+<bean name="cityDao" class="Ajax.Controller.CityDAO">
+<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+</bean>
+<bean name="cityService" class="Ajax.Controller.CityServiceImpl"></bean>
+
+
 		
 		
 <!-- 예외 처리 -->			
@@ -83,6 +97,25 @@
 			</props>
 		</property>
 	</bean>			
+			
+			
+			
+
+
+<mvc:annotation-driven>
+		<mvc:message-converters>
+			<!-- @ResponseBody로 String 처리할때 한글처리 -->
+			<bean class="org.springframework.http.converter.StringHttpMessageConverter">
+				<property name="supportedMediaTypes">
+					<list>
+						<value>text/html;charset=UTF-8</value>
+					</list>
+				</property>
+			</bean>
+		</mvc:message-converters>
+</mvc:annotation-driven>			
+			
+			
 			
 			
 <!-- hello가 viewname이면 /WEB-INF/view/hello.jsp  -->

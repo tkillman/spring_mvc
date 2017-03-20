@@ -70,7 +70,13 @@ SimpleConverterController
 
 
 SimpleConverterController
-<a href="test/simpleTest2.do">requestBody2</a>
+<a href="test/simpleTest2.do">requestBody2</a><br>
+
+
+CityController
+<a href="city/city.do">도시검사</a>
+
+
 
 </body>
 </html>
