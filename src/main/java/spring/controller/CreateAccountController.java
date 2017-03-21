@@ -23,8 +23,7 @@ public class CreateAccountController {
 		if (request.getMethod().equalsIgnoreCase("GET")) {
 			
 			MemberInfo mi = new MemberInfo();
-			
-			
+						
 			//우편번호 형식을 보여주기 위해서
 			Address address = new Address();
 			address.setZipcode(autoDetectZipcode(request.getRemoteAddr()));
@@ -32,16 +31,12 @@ public class CreateAccountController {
 			return mi;
 			
 		} else {
-			
 			return new MemberInfo();
-			
 		}
 	}
 
 	private String autoDetectZipcode(String remoteAddr) {
-		
 		return "000-000";
-		
 	}
 
 	@RequestMapping(method = RequestMethod.GET)

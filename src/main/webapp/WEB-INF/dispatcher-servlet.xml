@@ -84,6 +84,8 @@
 		class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
 		<property name="exceptionMappings">
 			<props>
+				
+				<!-- 예외는 순서대로 따라가기 때문에 최상위에 Exception이 오면 안된다. -->
 				<prop key="java.lang.ArithmeticException">
 					error/mathException
 				</prop>

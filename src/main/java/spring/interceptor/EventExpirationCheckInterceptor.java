@@ -26,7 +26,7 @@ public class EventExpirationCheckInterceptor extends HandlerInterceptorAdapter {
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception { // 혹시 또 실행할 handler가 있는가
 		if (checkEvent(request) && checkEventExpiration()) {
-			//요청이 맞는지, 날짜가 넘어가지 않았는지.
+			//요청이 맞으면 true, 날짜가 넘어 갔으면 true.
 			
 			displayEventExpirationPage(request, response);
 			return false;
@@ -52,3 +52,5 @@ public class EventExpirationCheckInterceptor extends HandlerInterceptorAdapter {
 	}
 
 }
+
+

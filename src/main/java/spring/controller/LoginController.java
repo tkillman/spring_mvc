@@ -41,7 +41,7 @@ public class LoginController {
 	@RequestMapping(method = RequestMethod.POST)
 	
 	public String submit(@Valid LoginCommand loginCommand, 
-						//@Valid -> 유효성 검증을 하겠다. .validate(Object object , Errors error)실행과 유사
+	//@Valid -> 유효성 검증을 하겠다. .validate(Object object , Errors error)실행과 유사
 			BindingResult result) {
 		
 		//값을 입력하지 않았을 때
@@ -57,8 +57,7 @@ public class LoginController {
 		} catch (AuthenticationException e) {
 			
 			//글로벌 에러 추가 reject("에러코드","message 번들에 줄 값","디폴트 메세지")
-			result.reject("invalidIdOrPassword", new Object[] { loginCommand
-					.getUserId() }, null);
+			result.reject("invalidIdOrPassword", new Object[] { loginCommand.getUserId() }, null);
 			return formViewName;
 		}
 	}

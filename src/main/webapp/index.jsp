@@ -30,7 +30,6 @@ HeaderController
 SearchController
 <a href="search/main.do">게임검색</a><br>
 
-
 CreateAccountController
 <a href="account/create.do">필수항목검사(유효성)</a><br>
 

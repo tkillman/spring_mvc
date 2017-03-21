@@ -9,6 +9,7 @@ import org.springframework.validation.Validator;
 public class LoginCommandValidator implements Validator {
 	
 	public boolean supports(Class<?> clazz) {
+		
 		return LoginCommand.class.isAssignableFrom(clazz);
 	}
 
