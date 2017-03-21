@@ -3,7 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%
     String cp = request.getContextPath(); //첫번째 경로를 가져온다
-request.setCharacterEncoding("UTF-8");
+	request.setCharacterEncoding("UTF-8");
 %>
 
 <!DOCTYPE html>
@@ -15,9 +15,18 @@ request.setCharacterEncoding("UTF-8");
 
 
 <script>
+
 $(function(){
+	
 	// 시도테이블의 리스트 가져오기
 	var url="<%=cp%>/city/sidoList.do";
+	
+	//  경로 설정
+	// http://localhost:8181/Srping_MVC/abc/index.jsp에서  'a.jsp'요청하면
+	// http://localhost:8181/Srping_MVC/abc/a.jsp
+	
+	// '/a.jsp' 요청하면  http://localhost:8181/Srping_MVC/a.jsp
+
 	var params="dumi="+new Date();
 	
 	$.ajax({
@@ -26,7 +35,7 @@ $(function(){
 		,data:params	//  요청에 전달되는 프로퍼티를 가진 객체
 		,dataType:"json"
 		,success:function(args){	//응답이 성공 상태 코드를 반환하면 호출되는 함수
-			 for(var idx=0; idx<args.data.length; idx++) {
+			 for(var idx=0; idx<args.data.length; idx++) { //리스트였는데 배열처럼 꺼내오게된다.
 				 $("#sido").append("<option value='"+args.data[idx]+"'>"+args.data[idx]+"</option>");
 				 //id가 sido인 요소선택
 				 //append로 기존 셀렉터로 선택된 요소 다음에 다음내용이 들어감
@@ -38,10 +47,12 @@ $(function(){
 	    	alert(e.responseText);
 	    }
 	});
+	
 });
 
 
 function cityList() {
+	
 	var snum=$("#sido").val();
 	// ID가 sido인 요소의 값을 불러옴
 	if(snum=="") {	                // snum에 ""가 선택되어있다면
@@ -49,8 +60,7 @@ function cityList() {
 			$("#city option:eq(1)").remove();	//city option의 1번째를 계속 삭제(0번째만 남기고 모두 지우게 된다) ,  eq : 지정된 index 번째의 엘리먼트 선택
 		});
 
-
-		//$("#city").append("<option value=''>::도시선ㅋ::</option>");	// 위의 반복문으로 모두 삭제되어 있으므로 추가해준다.
+		//$("#city").append("<option value=''>::도시선택::</option>");	// 위의 반복문으로 모두 삭제되어 있으므로 추가해준다.
 		// 위의 명령문은 바로의 위의 엘리먼트가 1이아닌 0이었을 때 사용하면 됨.
 		return;
 	}
@@ -64,6 +74,7 @@ function cityList() {
 		,data:params
 		,dataType:"json"
 		,success:function(args){
+			
 			$("#city option").each(function() {	//id가 city인 option요소에 적용할 반복문
 				$("#city option:eq(0)").remove();	// city option의 0번째 항목이 없을때까지 0번쨰 항목을 지운다. (기존에 있는거 모두 지운다.)
 			});

@@ -65,7 +65,7 @@ SimpleConverterController
 
 
 SimpleConverterController
-<a href="test/simpleTest1.do">requestBody2</a><br>
+<a href="test/simpleTest1.do">requestBody1</a><br>
 
 
 SimpleConverterController
@@ -73,7 +73,10 @@ SimpleConverterController
 
 
 CityController
-<a href="city/city.do">도시검사</a>
+<a href="city/city.do">도시검사</a><br>
+
+ViewResolver
+<a href="jsp/hello.do">viewResolver</a><br>
 
 
 

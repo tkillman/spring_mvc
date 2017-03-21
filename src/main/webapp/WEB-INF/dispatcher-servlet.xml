@@ -26,6 +26,7 @@
 			<list>
 				<value>messages.validation</value>
 				<!-- 추가할 메세지가 있으면 여기 추가해준다. -->
+				<value>messages.label</value>
 			</list>
 		</property>
 	</bean>
@@ -116,15 +117,13 @@
 			</bean>
 		</mvc:message-converters>
 </mvc:annotation-driven>			
-			
-			
-			
-			
-<!-- hello가 viewname이면 /WEB-INF/view/hello.jsp  -->
+		
 <bean name="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 <property name="prefix" value="/WEB-INF/view/"></property>
 <property name="suffix" value=".jsp"></property>
 </bean>
+
+			
 
 <bean name="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"></bean>
 

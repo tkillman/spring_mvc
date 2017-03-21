@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 public class CityServiceImpl implements CityService {
+	
 	@Autowired
 	private CityDAO dao;
 
@@ -19,7 +20,9 @@ public class CityServiceImpl implements CityService {
 		List<String> list = null;
 
 		try {
+			
 			list = dao.getListData("city.listSido");
+			
 		} catch (Exception e) {
 			System.out.println(e.toString());
 		}
