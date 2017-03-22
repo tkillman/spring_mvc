@@ -84,7 +84,14 @@
     <version>1.0.2</version>
 </dependency>
     
-    
+    <!-- tiles 사용을 위해 -->
+ <!-- https://mvnrepository.com/artifact/org.apache.tiles/tiles-jsp -->
+<dependency>
+    <groupId>org.apache.tiles</groupId>
+    <artifactId>tiles-jsp</artifactId>
+    <version>3.0.7</version>
+</dependency>
+ 
     
     
   </dependencies>

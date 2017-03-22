@@ -43,6 +43,7 @@
   
   </servlet-mapping>
   
+  <!-- 확장자 기반보다 경로 기반 dispatcher가 먼저 실행된다. -->
  <servlet>
 <servlet-name>dispatcherInternal</servlet-name>
 <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
@@ -54,7 +55,15 @@
 <url-pattern>/jsp/*</url-pattern>
 </servlet-mapping>
 
-  
+  <servlet>
+		<servlet-name>dispatcherTiles</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+	</servlet>
+
+<servlet-mapping>
+		<servlet-name>dispatcherTiles</servlet-name>
+		<url-pattern>/tiles/*</url-pattern>
+	</servlet-mapping>
   
   <filter>
   <filter-name>encodingFilter</filter-name>

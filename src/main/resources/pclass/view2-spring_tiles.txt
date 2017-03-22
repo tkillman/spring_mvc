@@ -198,7 +198,7 @@ public class LoginController {
 
 <tiles-definitions>
 
-<definition name="base_layout" template="/WEBINF/viewtiles/template/layout.jsp"
+<definition name="base_layout" template="/WEB-INF/viewtiles/template/layout.jsp"
 preparer="menuPreparer">
 <put-attribute name="header"
 			value="/WEB-INF/viewtiles/template/header.jsp" />

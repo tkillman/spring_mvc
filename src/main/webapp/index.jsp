@@ -27,7 +27,7 @@ CookieController
 HeaderController
 <a href="header/check.do">/header/check.do</a><br>
 
-SearchController
+GameSearchController
 <a href="search/main.do">게임검색</a><br>
 
 CreateAccountController
@@ -78,7 +78,9 @@ CityController
 ViewResolver
 <a href="jsp/hello.do">viewResolver</a><br>
 
-
+	
+tiles.controller.LoginController	
+<a href="tiles/login/login.do">/tiles/login/login.do</a><br>
 
 </body>
 </html>
