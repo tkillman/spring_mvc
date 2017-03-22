@@ -646,6 +646,7 @@
 
 /jsp/changeLanguage?lang=ko, /jsp/changeLanguage?lang=en
 	[LocaleChangeController.java]
+	
 	package spring.controller;
 
 	import java.util.Locale;
@@ -688,6 +689,7 @@
 	...
 
 	<Example004> /jsp/login/login.do?language=ko, /jsp/login/login.do?language=en
+	
 	[LocaleChangeController2.java]
 	package spring.controller;
 

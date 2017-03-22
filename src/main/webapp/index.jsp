@@ -78,7 +78,9 @@ CityController
 ViewResolver
 <a href="jsp/hello.do">viewResolver</a><br>
 
-
+	
+tiles.controller.LoginController	
+<a href="tiles/login/login.do">/tiles/login/login.do</a><br>
 
 </body>
 </html>

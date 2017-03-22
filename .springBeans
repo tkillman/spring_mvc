@@ -10,6 +10,7 @@
 		<config>src/main/webapp/WEB-INF/dispatcher-servlet.xml</config>
 		<config>src/main/webapp/WEB-INF/config.xml</config>
 		<config>src/main/webapp/WEB-INF/dispatcherInternal-servlet.xml</config>
+		<config>src/main/webapp/WEB-INF/dispatcherTiles-servlet.xml</config>
 	</configs>
 	<autoconfigs>
 	</autoconfigs>
