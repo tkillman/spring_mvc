@@ -27,7 +27,7 @@ CookieController
 HeaderController
 <a href="header/check.do">/header/check.do</a><br>
 
-SearchController
+GameSearchController
 <a href="search/main.do">게임검색</a><br>
 
 CreateAccountController
