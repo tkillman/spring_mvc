@@ -11,10 +11,13 @@
 <bean id="helloController" class="spring.controller.HelloController"></bean>
  -->
 
-
+<context:annotation-config></context:annotation-config>
 <context:component-scan base-package="spring.controller"></context:component-scan>
+<bean id="localeResolver" class="org.springframework.web.servlet.i18n.SessionLocaleResolver" />
 
 
+
+<!-- 서비스 객체 -->
 <bean id="articleService" class="spring.service.ArticleService" />
 <bean id="searchService" class="spring.service.SearchService" />
 
@@ -118,13 +121,15 @@
 		</mvc:message-converters>
 </mvc:annotation-driven>			
 		
+		
+<!-- viewResolver -->		
 <bean name="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 <property name="prefix" value="/WEB-INF/view/"></property>
 <property name="suffix" value=".jsp"></property>
 </bean>
 
 			
-
+<!-- 파일 업로드 Resolver -->
 <bean name="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"></bean>
 
 </beans>

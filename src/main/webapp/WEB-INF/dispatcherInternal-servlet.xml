@@ -52,8 +52,7 @@
 
 <!-- 로케일 설정 시작 -->
 
-<bean id="localeResolver"
-		class="org.springframework.web.servlet.i18n.SessionLocaleResolver" />
+<bean id="localeResolver" class="org.springframework.web.servlet.i18n.SessionLocaleResolver" />
 
 <bean id="localeChangeInterceptor" class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor"
 		p:paramName="language" />

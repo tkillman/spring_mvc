@@ -3,6 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%
     String cp = request.getContextPath(); //첫번째 경로를 가져온다
+    
 	request.setCharacterEncoding("UTF-8");
 %>
 
