@@ -44,21 +44,23 @@
 			</li>        	
         	<br>
         	<li>
-        	
+        	//DownloadController<br>
         		<a href="<c:url value='/download/file'/>">/download/file</a>
         		(DownloadController 및 DownloadView 예제) 
         	</li>
         	<br>
         	<li>
-        	
+        	//PageRanksController<br>
         		<a href="<c:url value='/download/pageRanks'/>">/download/pageRanks</a>
         		(PageRanksController 및 PageRanksView 엑셀 예제)
         	</li>
         	<br>
         	<li>
         	
+        	// PageReportController<br>
         		<a href="<c:url value='/download/pageReport'/>">/download/pageReport</a>
         		(PageReportController 및 PageReportView PDF 예제)
+        
         	</li>
         	
         	<br>
