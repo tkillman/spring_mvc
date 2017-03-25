@@ -1,0 +1,443 @@
+/download/file
+	
+	[DownloadController.java]
+	package spring.controller;
+
+	import java.io.File;
+
+	import org.springframework.beans.BeansException;
+	import org.springframework.context.ApplicationContext;
+	import org.springframework.context.ApplicationContextAware;
+	import org.springframework.stereotype.Controller;
+	import org.springframework.web.bind.annotation.RequestMapping;
+	import org.springframework.web.context.WebApplicationContext;
+	import org.springframework.web.servlet.ModelAndView;
+
+	@Controller
+	public class DownloadController implements ApplicationContextAware {
+
+		private WebApplicationContext context = null;
+
+		@RequestMapping("/file")
+		public ModelAndView download() throws Exception {
+			File downloadFile = getFile();
+			return new ModelAndView("download", "downloadFile", downloadFile);
+		}
+
+		private File getFile() {
+			String path = context.getServletContext().getRealPath(
+					"/WEB-INF/설명.txt");
+			return new File(path);
+		}
+
+		@Override
+		public void setApplicationContext(ApplicationContext applicationContext)
+				throws BeansException {
+			this.context = (WebApplicationContext) applicationContext;
+		}
+
+	}
+
+	[DownloadView.java]
+	package spring.view;
+
+	import java.io.File;
+	import java.io.FileInputStream;
+	import java.io.IOException;
+	import java.io.OutputStream;
+	import java.net.URLEncoder;
+	import java.util.Map;
+
+	import javax.servlet.http.HttpServletRequest;
+	import javax.servlet.http.HttpServletResponse;
+
+	import org.springframework.util.FileCopyUtils;
+	import org.springframework.web.servlet.view.AbstractView;
+
+	public class DownloadView extends AbstractView {
+
+		public DownloadView() {
+			setContentType("application/download; charset=utf-8");
+		}
+
+		@Override
+		protected void renderMergedOutputModel(Map<String, Object> model,
+				HttpServletRequest request, HttpServletResponse response)
+				throws Exception {
+			File file = (File) model.get("downloadFile");
+
+			response.setContentType(getContentType());
+			response.setContentLength((int) file.length());
+
+			String userAgent = request.getHeader("User-Agent");
+
+
+			boolean ie = userAgent.indexOf("MSIE") > -1;
+			String fileName = null;
+			if (ie) { 
+				fileName = URLEncoder.encode(file.getName(), "utf-8");
+			} else {
+				fileName = new String(file.getName().getBytes("utf-8"),
+						"iso-8859-1");
+			
+			}
+			response.setHeader("Content-Disposition", "attachment; filename=\""
+					+ fileName + "\";");
+
+
+			response.setHeader("Content-Transfer-Encoding", "binary");
+			OutputStream out = response.getOutputStream();
+
+			FileInputStream fis = null;
+			try {
+				fis = new FileInputStream(file);
+				FileCopyUtils.copy(fis, out);
+			} finally {
+				if (fis != null)
+					try {
+						fis.close();
+					} catch (IOException ex) {
+					}
+			}
+			out.flush();
+		}
+
+	}
+
+	[web.xml]
+	...
+	<servlet>
+		<servlet-name>dispatcherNonHtml</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>dispatcherNonHtml</servlet-name>
+		<url-pattern>/download/*</url-pattern>
+	</servlet-mapping>
+	...
+
+	[dispatcherNonHtml-servlet.xml]
+	<?xml version="1.0" encoding="UTF-8"?>
+
+	<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://www.springframework.org/schema/beans   
+	       http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
+
+		<bean id="downloadController" class="spring.controller.DownloadController" />	
+
+		<bean id="viewResolver"
+			class="org.springframework.web.servlet.view.BeanNameViewResolver" />
+
+		<bean id="download" class="spring.view.DownloadView" />
+	</beans>
+
+
+=================================================================================================================
+/download/pageRanks
+
+
+	[PageRanksController.java]
+	package spring.controller;
+
+	import java.util.ArrayList;
+	import java.util.List;
+
+	import org.springframework.stereotype.Controller;
+	import org.springframework.web.bind.annotation.RequestMapping;
+	import org.springframework.web.servlet.ModelAndView;
+
+	@Controller
+	public class PageRanksController {
+
+		@RequestMapping("/pageRanks")
+		public ModelAndView handleRequestInternal() {
+			List<PageRank> pageRanks = new ArrayList<PageRank>();
+			pageRanks.add(new PageRank(1, "/bbs/mir2/list"));
+			pageRanks.add(new PageRank(2, "/bbs/mir3/list"));
+			pageRanks.add(new PageRank(3, "/bbs/changchun2/list"));
+			return new ModelAndView("pageRanks", "pageRanks", pageRanks);
+		}
+
+	}
+
+	[PageRank.java]
+	package spring.controller;
+
+	import javax.xml.bind.annotation.XmlAccessType;
+	import javax.xml.bind.annotation.XmlAccessorType;
+	import javax.xml.bind.annotation.XmlType;
+
+	@XmlAccessorType(XmlAccessType.FIELD)
+	@XmlType(name = "", propOrder = { "rank", "page" })
+	public class PageRank {
+
+		private int rank;
+		private String page;
+
+		public PageRank() {
+		}
+		
+		public PageRank(int rank, String page) {
+			this.rank = rank;
+			this.page = page;
+		}
+
+		public int getRank() {
+			return rank;
+		}
+
+		public String getPage() {
+			return page;
+		}
+
+	}
+
+	[PageRanksView.java]
+	package view;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import view.controller.PageRank;
+
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.springframework.web.servlet.view.document.AbstractXlsView;
+
+public class PageRanksView extends AbstractXlsView {
+
+	@SuppressWarnings("unchecked")
+	protected void buildExcelDocument(Map<String, Object> model, Workbook workbook, HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
+		response.setHeader("Content-Disposition",
+				"attachment; filename=\"abc.xls\";");
+
+		Sheet sheet = createFirstSheet(workbook);
+		createColumnLabel(sheet);
+
+		List<PageRank> pageRanks = (List<PageRank>) model.get("pageRanks");
+		int rowNum = 1;
+		for (PageRank rank : pageRanks) {
+			createPageRankRow(sheet, rank, rowNum++);
+		}
+	}
+
+	private Sheet createFirstSheet(Workbook workbook) {
+		Sheet sheet = workbook.createSheet();
+		workbook.setSheetName(0, "페이지 순위");
+		sheet.setColumnWidth(1, 256 * 20);
+		return sheet;
+	}
+
+	private void createColumnLabel(Sheet sheet) {
+		Row firstRow = sheet.createRow(0);
+		Cell cell = firstRow.createCell(0);
+		cell.setCellValue("순위");
+
+		cell = firstRow.createCell(1);
+		cell.setCellValue("페이지");
+	}
+
+	private void createPageRankRow(Sheet sheet, PageRank rank, int rowNum) {
+		Row row = sheet.createRow(rowNum);
+		Cell cell = row.createCell(0);
+		cell.setCellValue(rank.getRank());
+
+		cell = row.createCell(1);
+		cell.setCellValue(rank.getPage());
+
+	}
+
+}
+
+
+	[dispatcherNonHtml-servlet.xml]
+	...
+	<bean id="pageRanksController" class="spring.controller.PageRanksController" />
+	...
+	<bean id="pageRanks" class="spring.view.PageRanksView" />
+	...
+
+=================================================================================================================
+
+/download/pageReport
+	
+	[PageReportController.java]
+	package spring.controller;
+
+	import java.util.ArrayList;
+	import java.util.List;
+
+	import org.springframework.stereotype.Controller;
+	import org.springframework.web.bind.annotation.RequestMapping;
+	import org.springframework.web.servlet.ModelAndView;
+
+	@Controller
+	public class PageReportController {
+
+		@RequestMapping("/pageReport")
+		public ModelAndView pdfReport() {
+			List<PageRank> pageRanks = new ArrayList<PageRank>();
+			pageRanks.add(new PageRank(1, "/bbs/mir2/list"));
+			pageRanks.add(new PageRank(2, "/bbs/mir3/list"));
+			pageRanks.add(new PageRank(3, "/bbs/changchun2/list"));
+			return new ModelAndView("pageReport", "pageRanks", pageRanks);
+		}
+	}
+
+	[PageReportView.java]
+	package view;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import view.controller.PageRank;
+
+import org.springframework.web.servlet.view.document.AbstractPdfView;
+
+import com.lowagie.text.Cell;
+import com.lowagie.text.Document;
+import com.lowagie.text.Font;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.Table;
+import com.lowagie.text.pdf.BaseFont;
+import com.lowagie.text.pdf.PdfWriter;
+
+public class PageReportView extends AbstractPdfView {
+
+	@SuppressWarnings("unchecked")
+	protected void buildPdfDocument(Map<String, Object> model, Document document, PdfWriter writer,
+			HttpServletRequest request, HttpServletResponse response) throws Exception {
+		List<PageRank> pageRanks = (List<PageRank>) model.get("pageRanks");
+		Table table = new Table(2, pageRanks.size() + 1);
+		table.setPadding(5);
+
+		BaseFont bfKorean = BaseFont.createFont("c:\\windows\\fonts\\batang.ttc,0", BaseFont.IDENTITY_H,
+				BaseFont.EMBEDDED);
+
+		Font font = new Font(bfKorean);
+		Cell cell = new Cell(new Paragraph("순위", font));
+		cell.setHeader(true);
+		table.addCell(cell);
+		cell = new Cell(new Paragraph("페이지", font));
+		table.addCell(cell);
+		table.endHeaders();
+
+		for (PageRank rank : pageRanks) {
+			table.addCell(Integer.toString(rank.getRank()));
+			table.addCell(rank.getPage());
+		}
+		document.add(table);
+	}
+
+}
+
+	[dispatcherNonHtml-servlet.xml]
+	...
+	<bean id="pageReportController" class="spring.controller.PageReportController" />
+	...
+	<bean id="pageReport" class="spring.view.PageReportView" />
+	...
+
+=================================================================================================================
+ /download/pageXmlReport
+	[PageReportController.java]
+	import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
+	
+	public class PageRanksController {
+
+	@RequestMapping("/pageXmlReport")
+	public ModelAndView xmlReport() {
+		List<PageRank> pageRanks = new ArrayList<PageRank>();
+		pageRanks.add(new PageRank(1, "/bbs/mir2/list"));
+		pageRanks.add(new PageRank(2, "/bbs/mir3/list"));
+		pageRanks.add(new PageRank(3, "/bbs/changchun2/list"));
+return new ModelAndView("pageXmlReport", "report", new PageRankReport(			pageRanks));
+	}
+	...
+        
+	[PageRankReport.java]
+	package spring.controller;
+
+	import java.util.List;
+
+	import javax.xml.bind.annotation.XmlAccessType;
+	import javax.xml.bind.annotation.XmlAccessorType;
+	import javax.xml.bind.annotation.XmlElement;
+	import javax.xml.bind.annotation.XmlRootElement;
+
+	@XmlAccessorType(XmlAccessType.FIELD)
+	@XmlRootElement(name = "rank-report")
+	public class PageRankReport {
+
+		@XmlElement(name = "page-rank")
+		private List<PageRank> pageRanks;
+
+		public PageRankReport() {
+		}
+		
+		public PageRankReport(List<PageRank> pageRanks) {
+			this.pageRanks = pageRanks;
+		}
+
+		public List<PageRank> getPageRanks() {
+			return pageRanks;
+		}
+
+	}
+	
+	[dispatcherNonHtml-servlet.xml]
+	...
+	<bean id="pageXmlReport"
+		class="org.springframework.web.servlet.view.xml.MarshallingView">
+		<property name="marshaller" ref="marshaller" />
+		<property name="modelKey" value="report" />
+	</bean>
+
+	<bean id="marshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+		<property name="classesToBeBound">
+			<list>
+				<value>spring.controller.PageRankReport</value>
+			</list>
+		</property>
+	</bean>
+	...
+=================================================================================================================
+
+/download/pageJsonReport
+
+	[PageReportController.java]
+	...
+	@RequestMapping("/pageJsonReport")
+	public ModelAndView jsonReport() {
+		List<PageRank> pageRanks = new ArrayList<PageRank>();
+		pageRanks.add(new PageRank(1, "/bbs/mir2/list"));
+		pageRanks.add(new PageRank(2, "/bbs/mir3/list"));
+		pageRanks.add(new PageRank(3, "/bbs/changchun2/list"));
+		return new ModelAndView("pageJsonReport", "report", new PageRankReport(
+				pageRanks));
+	}
+	...
+	
+	[dispatcherNonHtml-servlet.xml]
+	...
+	 	<bean
+		class="org.springframework.web.servlet.view.json.MappingJackson2JsonView"
+		id="pageJsonReport" />...
+
+

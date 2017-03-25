@@ -1,0 +1,10 @@
+  경로 설정
+// http://localhost:8181/Srping_MVC/abc/index.jsp에서  'a.jsp'요청하면
+// http://localhost:8181/Srping_MVC/abc/a.jsp
+	
+// '/a.jsp' 요청하면  http://localhost:8181/Srping_MVC/a.jsp
+
+
+
+
+//

@@ -59,6 +59,9 @@ public class GameSearchController {
 		return mav;
 	}
 
+	//이 컨트롤러의 예외만 처리가능하다.
+	//
+	
 	@ExceptionHandler(NullPointerException.class)
 	public String handleNullPointerException(NullPointerException ex) {
 		return "error/nullException";

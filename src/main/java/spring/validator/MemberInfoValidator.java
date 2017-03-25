@@ -13,6 +13,7 @@ public class MemberInfoValidator {
 
 	
 	public void validate(Object target, Errors errors) {
+		
 		MemberInfo memberInfo = (MemberInfo) target;
 		
 		if (memberInfo.getId() == null || memberInfo.getId().trim().isEmpty()) {

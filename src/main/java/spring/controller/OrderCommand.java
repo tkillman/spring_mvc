@@ -6,7 +6,8 @@ package spring.controller;
 	import spring.model.OrderItem;
 
 	public class OrderCommand {
-
+		// javabean , dto , command , value object , command oject ,
+		// 
 		private List<OrderItem> orderItems;
 		
 		private Address address;

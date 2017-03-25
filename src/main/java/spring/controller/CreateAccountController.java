@@ -23,8 +23,7 @@ public class CreateAccountController {
 		if (request.getMethod().equalsIgnoreCase("GET")) {
 			
 			MemberInfo mi = new MemberInfo();
-			
-			
+						
 			//우편번호 형식을 보여주기 위해서
 			Address address = new Address();
 			address.setZipcode(autoDetectZipcode(request.getRemoteAddr()));
@@ -32,9 +31,7 @@ public class CreateAccountController {
 			return mi;
 			
 		} else {
-			
 			return new MemberInfo();
-			
 		}
 	}
 
@@ -47,6 +44,7 @@ public class CreateAccountController {
 		return "account/creationForm";
 	}
 
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public String submit(@ModelAttribute("command") MemberInfo memberInfo,
 			BindingResult result) { //유효성 검사를 위해서 BindingResult를 받아온다.
@@ -56,12 +54,11 @@ public class CreateAccountController {
 		if (result.hasErrors()) { //reject() , rejectValue() 메소드가 한번이라도 실행되면 true 리턴
 			
 			return "account/creationForm";
+			
 		}
 		
 		return "account/created";
 		
 	}
-	
-	
 	
 }

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://www.springframework.org/schema/beans   
+	       http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
+
+<!-- 컨트롤러 -->
+		<bean id="downloadController" class="spring.controller.DownloadController" />	
+
+		<bean id="pageRanksController" class="spring.controller.PageRanksController" />
+	
+	<bean id="pageReportController" class="spring.controller.PageReportController" />
+	
+	
+	<!-- BeanNameViewResolver -->
+		<bean id="viewResolver"
+			class="org.springframework.web.servlet.view.BeanNameViewResolver" />
+	
+	<!-- 찾아갈 뷰 객체들 -->
+	<bean id="download" class="spring.view.DownloadView" />
+	<bean id="pageRanks" class="spring.view.PageRanksView" />
+	<bean id="pageReport" class="spring.view.PageReportView" />
+	</beans>
