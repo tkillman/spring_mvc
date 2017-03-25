@@ -49,7 +49,9 @@ public class GameSearchController {
 
 	@RequestMapping("/search/game.do")
 	public ModelAndView search(@ModelAttribute("command") SearchCommand command) {
+		
 		//ModelAndView생성자 첫번째 매개변수는 view name
+		
 		ModelAndView mav = new ModelAndView("search/game");
 		System.out.println("검색어 = " + command.getQuery().toUpperCase());
 		SearchResult result = searchService.search(command);
