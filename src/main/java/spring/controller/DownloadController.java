@@ -17,20 +17,32 @@ package spring.controller;
 
 		@RequestMapping("/file")
 		public ModelAndView download() throws Exception {
+			
+			//파일 객체를 받는다.
 			File downloadFile = getFile();
+			
+			//1. 돌아갈 viewName, 2.쓸 모델 Name 3.객체
+			
 			return new ModelAndView("download", "downloadFile", downloadFile);
+			
+			
+			
 		}
 
 		
 		private File getFile() {
 			String path = context.getServletContext().getRealPath(
 					"/WEB-INF/설명.txt");
+			//web-inf에 있는 설명.txt 파일의 실제 경로를 반환해서 file 객체를 생성
+			
 			return new File(path);
 		}
 
+		
 		@Override
 		public void setApplicationContext(ApplicationContext applicationContext)
 				throws BeansException {
+			//현제 application의 객체를 반환한다.
 			this.context = (WebApplicationContext) applicationContext;
 		}
 

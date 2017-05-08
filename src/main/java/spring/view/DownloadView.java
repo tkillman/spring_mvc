@@ -15,14 +15,17 @@ package spring.view;
 
 	public class DownloadView extends AbstractView {
 
+		
 		public DownloadView() {
 			setContentType("application/download; charset=utf-8");
 		}
 
+		
 		@Override
 		protected void renderMergedOutputModel(Map<String, Object> model,
 				HttpServletRequest request, HttpServletResponse response)
 				throws Exception {
+			
 			File file = (File) model.get("downloadFile");
 
 			response.setContentType(getContentType());
@@ -54,6 +57,8 @@ package spring.view;
 			OutputStream out = response.getOutputStream();
 
 			FileInputStream fis = null;
+			
+			
 			try {
 				fis = new FileInputStream(file);
 				FileCopyUtils.copy(fis, out);
@@ -65,6 +70,9 @@ package spring.view;
 					}
 			}
 			out.flush();
-		}
+		
+		} // renderMergedOutputModel 메소드 종료
 
-	}
+		
+		
+	}//클래스 종료
